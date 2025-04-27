@@ -1,0 +1,249 @@
+{
+  "cells": [
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "view-in-github",
+        "colab_type": "text"
+      },
+      "source": [
+        "<a href=\"https://colab.research.google.com/github/Adarsh-hello/deepfake_detection/blob/main/deepfake_app.py\" target=\"_parent\"><img src=\"https://colab.research.google.com/assets/colab-badge.svg\" alt=\"Open In Colab\"/></a>"
+      ]
+    },
+    {
+      "cell_type": "code",
+      "execution_count": 1,
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "id": "rQjDBTamsSPZ",
+        "outputId": "b44458f0-0fd8-4f64-9c28-0806afb58ba2"
+      },
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "Collecting streamlit\n",
+            "  Downloading streamlit-1.44.1-py3-none-any.whl.metadata (8.9 kB)\n",
+            "Collecting pyngrok\n",
+            "  Downloading pyngrok-7.2.5-py3-none-any.whl.metadata (8.9 kB)\n",
+            "Requirement already satisfied: gdown in /usr/local/lib/python3.11/dist-packages (5.2.0)\n",
+            "Requirement already satisfied: altair<6,>=4.0 in /usr/local/lib/python3.11/dist-packages (from streamlit) (5.5.0)\n",
+            "Requirement already satisfied: blinker<2,>=1.0.0 in /usr/local/lib/python3.11/dist-packages (from streamlit) (1.9.0)\n",
+            "Requirement already satisfied: cachetools<6,>=4.0 in /usr/local/lib/python3.11/dist-packages (from streamlit) (5.5.2)\n",
+            "Requirement already satisfied: click<9,>=7.0 in /usr/local/lib/python3.11/dist-packages (from streamlit) (8.1.8)\n",
+            "Requirement already satisfied: numpy<3,>=1.23 in /usr/local/lib/python3.11/dist-packages (from streamlit) (2.0.2)\n",
+            "Requirement already satisfied: packaging<25,>=20 in /usr/local/lib/python3.11/dist-packages (from streamlit) (24.2)\n",
+            "Requirement already satisfied: pandas<3,>=1.4.0 in /usr/local/lib/python3.11/dist-packages (from streamlit) (2.2.2)\n",
+            "Requirement already satisfied: pillow<12,>=7.1.0 in /usr/local/lib/python3.11/dist-packages (from streamlit) (11.1.0)\n",
+            "Requirement already satisfied: protobuf<6,>=3.20 in /usr/local/lib/python3.11/dist-packages (from streamlit) (5.29.4)\n",
+            "Requirement already satisfied: pyarrow>=7.0 in /usr/local/lib/python3.11/dist-packages (from streamlit) (18.1.0)\n",
+            "Requirement already satisfied: requests<3,>=2.27 in /usr/local/lib/python3.11/dist-packages (from streamlit) (2.32.3)\n",
+            "Requirement already satisfied: tenacity<10,>=8.1.0 in /usr/local/lib/python3.11/dist-packages (from streamlit) (9.1.2)\n",
+            "Requirement already satisfied: toml<2,>=0.10.1 in /usr/local/lib/python3.11/dist-packages (from streamlit) (0.10.2)\n",
+            "Requirement already satisfied: typing-extensions<5,>=4.4.0 in /usr/local/lib/python3.11/dist-packages (from streamlit) (4.13.2)\n",
+            "Collecting watchdog<7,>=2.1.5 (from streamlit)\n",
+            "  Downloading watchdog-6.0.0-py3-none-manylinux2014_x86_64.whl.metadata (44 kB)\n",
+            "\u001b[2K     \u001b[90m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\u001b[0m \u001b[32m44.3/44.3 kB\u001b[0m \u001b[31m2.1 MB/s\u001b[0m eta \u001b[36m0:00:00\u001b[0m\n",
+            "\u001b[?25hRequirement already satisfied: gitpython!=3.1.19,<4,>=3.0.7 in /usr/local/lib/python3.11/dist-packages (from streamlit) (3.1.44)\n",
+            "Collecting pydeck<1,>=0.8.0b4 (from streamlit)\n",
+            "  Downloading pydeck-0.9.1-py2.py3-none-any.whl.metadata (4.1 kB)\n",
+            "Requirement already satisfied: tornado<7,>=6.0.3 in /usr/local/lib/python3.11/dist-packages (from streamlit) (6.4.2)\n",
+            "Requirement already satisfied: PyYAML>=5.1 in /usr/local/lib/python3.11/dist-packages (from pyngrok) (6.0.2)\n",
+            "Requirement already satisfied: beautifulsoup4 in /usr/local/lib/python3.11/dist-packages (from gdown) (4.13.4)\n",
+            "Requirement already satisfied: filelock in /usr/local/lib/python3.11/dist-packages (from gdown) (3.18.0)\n",
+            "Requirement already satisfied: tqdm in /usr/local/lib/python3.11/dist-packages (from gdown) (4.67.1)\n",
+            "Requirement already satisfied: jinja2 in /usr/local/lib/python3.11/dist-packages (from altair<6,>=4.0->streamlit) (3.1.6)\n",
+            "Requirement already satisfied: jsonschema>=3.0 in /usr/local/lib/python3.11/dist-packages (from altair<6,>=4.0->streamlit) (4.23.0)\n",
+            "Requirement already satisfied: narwhals>=1.14.2 in /usr/local/lib/python3.11/dist-packages (from altair<6,>=4.0->streamlit) (1.35.0)\n",
+            "Requirement already satisfied: gitdb<5,>=4.0.1 in /usr/local/lib/python3.11/dist-packages (from gitpython!=3.1.19,<4,>=3.0.7->streamlit) (4.0.12)\n",
+            "Requirement already satisfied: python-dateutil>=2.8.2 in /usr/local/lib/python3.11/dist-packages (from pandas<3,>=1.4.0->streamlit) (2.8.2)\n",
+            "Requirement already satisfied: pytz>=2020.1 in /usr/local/lib/python3.11/dist-packages (from pandas<3,>=1.4.0->streamlit) (2025.2)\n",
+            "Requirement already satisfied: tzdata>=2022.7 in /usr/local/lib/python3.11/dist-packages (from pandas<3,>=1.4.0->streamlit) (2025.2)\n",
+            "Requirement already satisfied: charset-normalizer<4,>=2 in /usr/local/lib/python3.11/dist-packages (from requests<3,>=2.27->streamlit) (3.4.1)\n",
+            "Requirement already satisfied: idna<4,>=2.5 in /usr/local/lib/python3.11/dist-packages (from requests<3,>=2.27->streamlit) (3.10)\n",
+            "Requirement already satisfied: urllib3<3,>=1.21.1 in /usr/local/lib/python3.11/dist-packages (from requests<3,>=2.27->streamlit) (2.3.0)\n",
+            "Requirement already satisfied: certifi>=2017.4.17 in /usr/local/lib/python3.11/dist-packages (from requests<3,>=2.27->streamlit) (2025.1.31)\n",
+            "Requirement already satisfied: soupsieve>1.2 in /usr/local/lib/python3.11/dist-packages (from beautifulsoup4->gdown) (2.7)\n",
+            "Requirement already satisfied: PySocks!=1.5.7,>=1.5.6 in /usr/local/lib/python3.11/dist-packages (from requests[socks]->gdown) (1.7.1)\n",
+            "Requirement already satisfied: smmap<6,>=3.0.1 in /usr/local/lib/python3.11/dist-packages (from gitdb<5,>=4.0.1->gitpython!=3.1.19,<4,>=3.0.7->streamlit) (5.0.2)\n",
+            "Requirement already satisfied: MarkupSafe>=2.0 in /usr/local/lib/python3.11/dist-packages (from jinja2->altair<6,>=4.0->streamlit) (3.0.2)\n",
+            "Requirement already satisfied: attrs>=22.2.0 in /usr/local/lib/python3.11/dist-packages (from jsonschema>=3.0->altair<6,>=4.0->streamlit) (25.3.0)\n",
+            "Requirement already satisfied: jsonschema-specifications>=2023.03.6 in /usr/local/lib/python3.11/dist-packages (from jsonschema>=3.0->altair<6,>=4.0->streamlit) (2024.10.1)\n",
+            "Requirement already satisfied: referencing>=0.28.4 in /usr/local/lib/python3.11/dist-packages (from jsonschema>=3.0->altair<6,>=4.0->streamlit) (0.36.2)\n",
+            "Requirement already satisfied: rpds-py>=0.7.1 in /usr/local/lib/python3.11/dist-packages (from jsonschema>=3.0->altair<6,>=4.0->streamlit) (0.24.0)\n",
+            "Requirement already satisfied: six>=1.5 in /usr/local/lib/python3.11/dist-packages (from python-dateutil>=2.8.2->pandas<3,>=1.4.0->streamlit) (1.17.0)\n",
+            "Downloading streamlit-1.44.1-py3-none-any.whl (9.8 MB)\n",
+            "\u001b[2K   \u001b[90m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\u001b[0m \u001b[32m9.8/9.8 MB\u001b[0m \u001b[31m60.5 MB/s\u001b[0m eta \u001b[36m0:00:00\u001b[0m\n",
+            "\u001b[?25hDownloading pyngrok-7.2.5-py3-none-any.whl (23 kB)\n",
+            "Downloading pydeck-0.9.1-py2.py3-none-any.whl (6.9 MB)\n",
+            "\u001b[2K   \u001b[90m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\u001b[0m \u001b[32m6.9/6.9 MB\u001b[0m \u001b[31m38.1 MB/s\u001b[0m eta \u001b[36m0:00:00\u001b[0m\n",
+            "\u001b[?25hDownloading watchdog-6.0.0-py3-none-manylinux2014_x86_64.whl (79 kB)\n",
+            "\u001b[2K   \u001b[90m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\u001b[0m \u001b[32m79.1/79.1 kB\u001b[0m \u001b[31m5.5 MB/s\u001b[0m eta \u001b[36m0:00:00\u001b[0m\n",
+            "\u001b[?25hInstalling collected packages: watchdog, pyngrok, pydeck, streamlit\n",
+            "Successfully installed pydeck-0.9.1 pyngrok-7.2.5 streamlit-1.44.1 watchdog-6.0.0\n"
+          ]
+        }
+      ],
+      "source": [
+        "!pip install streamlit pyngrok gdown\n"
+      ]
+    },
+    {
+      "cell_type": "code",
+      "execution_count": 10,
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "id": "gWMn1_UWj4Sw",
+        "outputId": "60ef4dae-bf2c-49bd-a6e9-205e447e494d"
+      },
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "Writing app.py\n"
+          ]
+        }
+      ],
+      "source": [
+        "%%writefile app.py\n",
+        "import streamlit as st\n",
+        "import numpy as np\n",
+        "from PIL import Image\n",
+        "import os\n",
+        "\n",
+        "try:\n",
+        "    import gdown\n",
+        "except ImportError:\n",
+        "    os.system('pip install gdown')\n",
+        "    import gdown\n",
+        "\n",
+        "from tensorflow.keras.models import load_model\n",
+        "\n",
+        "st.set_page_config(page_title=\"Deepfake Detection using CNN\", page_icon=\"🧠\", layout=\"centered\")\n",
+        "\n",
+        "st.title(\"🧠 Deepfake Detection - CNN Model (with Google Drive)\")\n",
+        "\n",
+        "MODEL_PATH = \"deepfake_detection.h5\"\n",
+        "DRIVE_FILE_ID = \"1azb4GHaBau-7cLK_9na_emb2t7iBgtXN\"\n",
+        "\n",
+        "def download_model():\n",
+        "    if not os.path.exists(MODEL_PATH):\n",
+        "        url = f\"https://drive.google.com/uc?id={DRIVE_FILE_ID}\"\n",
+        "        gdown.download(url, MODEL_PATH, quiet=False)\n",
+        "\n",
+        "uploaded_file = st.file_uploader(\"📤 Upload an image\", type=[\"jpg\", \"jpeg\", \"png\"])\n",
+        "\n",
+        "@st.cache_resource\n",
+        "def load_cnn_model():\n",
+        "    download_model()\n",
+        "    cnn = load_model(MODEL_PATH)\n",
+        "    return cnn\n",
+        "\n",
+        "try:\n",
+        "    cnn_model = load_cnn_model()\n",
+        "except Exception as e:\n",
+        "    st.error(f\"❌ Error loading model: {e}\")\n",
+        "    st.stop()\n",
+        "\n",
+        "labels = ['Real', 'Fake']\n",
+        "\n",
+        "def preprocess(img):\n",
+        "    img = img.resize((128, 128))\n",
+        "    img_array = np.array(img) / 255.0\n",
+        "    if img_array.shape[-1] == 4:\n",
+        "        img_array = img_array[..., :3]\n",
+        "    return np.expand_dims(img_array, axis=0)\n",
+        "\n",
+        "if uploaded_file is not None:\n",
+        "    st.image(uploaded_file, caption=\"🖼 Uploaded Image\", use_column_width=False, width=250)\n",
+        "    try:\n",
+        "        image = Image.open(uploaded_file)\n",
+        "        processed = preprocess(image)\n",
+        "        cnn_pred = cnn_model.predict(processed)[0]\n",
+        "        cnn_result = labels[np.argmax(cnn_pred)]\n",
+        "\n",
+        "        st.markdown(\"### 🔍 Prediction Result:\")\n",
+        "        st.success(f\"🧠 CNN Prediction: {cnn_result} ({cnn_pred[np.argmax(cnn_pred)]*100:.2f}%)\")\n",
+        "\n",
+        "    except Exception as e:\n",
+        "        st.error(f\"Prediction error: {e}\")\n"
+      ]
+    },
+    {
+      "cell_type": "code",
+      "execution_count": 11,
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "id": "YNjmPtyMhrjA",
+        "outputId": "8fc72b5f-88ad-416c-d604-34b4e3f44b01"
+      },
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "\n",
+            "Collecting usage statistics. To deactivate, set browser.gatherUsageStats to false.\n",
+            "\u001b[0m\n",
+            "\u001b[0m\n",
+            "\u001b[34m\u001b[1m  You can now view your Streamlit app in your browser.\u001b[0m\n",
+            "\u001b[0m\n",
+            "\u001b[34m  Local URL: \u001b[0m\u001b[1mhttp://localhost:8501\u001b[0m\n",
+            "\u001b[34m  Network URL: \u001b[0m\u001b[1mhttp://172.28.0.12:8501\u001b[0m\n",
+            "\u001b[34m  External URL: \u001b[0m\u001b[1mhttp://34.125.200.87:8501\u001b[0m\n",
+            "\u001b[0m\n",
+            "🚀 Public URL: NgrokTunnel: \"https://f211-34-125-200-87.ngrok-free.app\" -> \"http://localhost:8501\"\n"
+          ]
+        }
+      ],
+      "source": [
+        "from pyngrok import ngrok\n",
+        "import time\n",
+        "import threading\n",
+        "\n",
+        "# Start the Streamlit server in a thread\n",
+        "def start_streamlit():\n",
+        "    !streamlit run app.py\n",
+        "\n",
+        "thread = threading.Thread(target=start_streamlit)\n",
+        "thread.start()\n",
+        "\n",
+        "# Wait for server to properly start\n",
+        "time.sleep(5)\n",
+        "\n",
+        "# Set auth token only once\n",
+        "ngrok.set_auth_token(\"2wJv717kfaZlPwHjKAAQMErod1t_5iYEcD4RaSpoLkHAwgz2i\")\n",
+        "\n",
+        "# Create ngrok tunnel\n",
+        "public_url = ngrok.connect(8501)\n",
+        "print(\"🚀 Public URL:\", public_url)\n"
+      ]
+    }
+  ],
+  "metadata": {
+    "accelerator": "GPU",
+    "colab": {
+      "gpuType": "T4",
+      "provenance": [],
+      "authorship_tag": "ABX9TyNJGadWQT88YGGwjiYLyJiI",
+      "include_colab_link": true
+    },
+    "kernelspec": {
+      "display_name": "Python 3",
+      "name": "python3"
+    },
+    "language_info": {
+      "name": "python"
+    }
+  },
+  "nbformat": 4,
+  "nbformat_minor": 0
+}
